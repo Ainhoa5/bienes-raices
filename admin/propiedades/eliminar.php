@@ -9,10 +9,23 @@ if (isset($_POST['id_to_delete'])) {
     // Connect to the database
     $db = conectarDB();
     // Fetch existing record
-    $query = "SELECT imagen FROM propiedades WHERE id = '$id_to_edit'";
+    $query = "SELECT imagen FROM propiedades WHERE id = '$id_to_delete'";
     $result = mysqli_query($db, $query);
     $property = mysqli_fetch_assoc($result);
-    
+    $imagePath = "../../imagenes/".$property['imagen'];
+    if (file_exists($imagePath)) {
+        
+        // Delete the file
+        if (unlink($imagePath)) {
+            echo "File deleted successfully.";
+        } else {
+            echo "File could not be deleted.";
+        }
+        
+    } else {
+        echo "File does not exist.";
+    }
+
     // Create delete query
     $query = "DELETE FROM propiedades WHERE id = '$id_to_delete'";
 
