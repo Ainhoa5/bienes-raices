@@ -2,14 +2,39 @@
 //importar la conexión
 include 'includes/config/database.php';
 
+
+// Capture the search query if it exists
+$search_term = $_GET['search_term'] ?? null;
+
 //consultar
 $db = conectarDB();
-$sql = "SELECT * FROM propiedades";
-$result = mysqli_query($db, $sql); 
-// Reiniciar el puntero del resultado, en caso de que sea necesario
-mysqli_data_seek($result, 0);
+
+
+// SQL query
+if ($search_term) {
+    $sql = "SELECT * FROM propiedades WHERE titulo LIKE ?";
+    $stmt = $db->prepare($sql);
+    if ($stmt === false) {
+        die("Failed to prepare SQL statement: " . $db->error);
+    }
+    $search_term = '%' . $search_term . '%';  // Use wildcards for LIKE query
+    $stmt->bind_param('s', $search_term);
+} else {
+    $sql = "SELECT * FROM propiedades";
+    $stmt = $db->prepare($sql);
+}
+
+// Execute and fetch results
+$stmt->execute();
+$result = $stmt->get_result();
+
+//mysqli_data_seek($result, 0);
 
 ?>
+<form action="index.php" method="get">
+    <input type="text" name="search_term" placeholder="Buscar por titulo...">
+    <input type="submit" value="Search">
+</form>
 
 <?php while($property = mysqli_fetch_assoc($result)): ?>
 <div class="contenedor-anuncios">
