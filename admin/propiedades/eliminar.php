@@ -28,8 +28,6 @@ if (isset($_POST['id_to_delete'])) {
     // Create delete query
     $query = "DELETE FROM propiedades WHERE id = '$id_to_delete'";
 
-    // Eliminar imagen
-
     // Execute the query
     if (mysqli_query($db, $query)) {
         // Redirect to the previous page or a specific location
