@@ -34,7 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auth = password_verify($UPassword, $usuario["UPassword"]);
             if ($auth) {
                 //el usuario está autentificado
-                echo $usuario["Nombre"];
+                session_start();
+                // echo "<pre>";
+                // var_dump($_SESSION);
+                // echo "</pre>";
+                //llenamos los datos de la sesión
+                $_SESSION["usuario"]=$usuario["email"];
+                $_SESSION["login"]=true;
+                header('Location: /admin');
             } else {
                 $errores[] = "El password es incorrecto";
                 callErrors($errores);
