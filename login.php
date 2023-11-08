@@ -10,6 +10,7 @@ function callErrors($errores){
         <?php
     }
 }
+
 //validación del formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = mysqli_real_escape_string($db, filter_var($_POST['email'], FILTER_VALIDATE_EMAIL));

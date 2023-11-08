@@ -1,6 +1,11 @@
 <?php
 //importar la conexión
 require 'includes/config/database.php';
+require '../../includes/funciones.php';
+$auth=estaAutenticado();
+if(!$auth){
+    header('Location: /');
+}
 $db=conectarDB();
 //crear un email y un password
 $name="Ainhoa";

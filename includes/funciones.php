@@ -1,19 +1,21 @@
 <?php
-    include 'app.php';
-    function incluirTemplate($nombre,$inicio,$relativePath=''){
-        if (!defined('RELATIVE_PATH')) {
-            define('RELATIVE_PATH', $relativePath);
-        }
-        
-        include TEMPLATES_URL."\\${nombre}.php";
+include 'app.php';
+function incluirTemplate($nombre, $inicio, $relativePath = '')
+{
+    if (!defined('RELATIVE_PATH')) {
+        define('RELATIVE_PATH', $relativePath);
     }
-    function estaAutenticado():bool{
-        session_start();
-        $auth=$_SESSION['login'];
-        if ($auth){
-               return true;
-        }
-        return false;
- 
- }
+
+    include TEMPLATES_URL . "\\${nombre}.php";
+}
+function estaAutenticado(): bool
+{
+    session_start();
+    $auth = $_SESSION['login'];
+    if ($auth) {
+        return true;
+    }
+    return false;
+
+}
 ?>

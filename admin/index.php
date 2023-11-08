@@ -1,6 +1,10 @@
 <?php
 include '../includes/funciones.php';
 incluirTemplate('header', false, '../');
+$auth=estaAutenticado();
+if(!$auth){
+    header('Location: ../login.php');
+}
 ?>
 
 <head>
