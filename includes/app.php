@@ -1,4 +1,6 @@
 <?php
-    define('TEMPLATES_URL', __DIR__.'\\templates');
-    define('FUNCIONES_URL', __DIR__.'funciones.php');
+
+require_once  'funciones.php';
+require_once  'config/database.php';
+require_once  __DIR__ . '/../vendor/autoload.php';
 ?>

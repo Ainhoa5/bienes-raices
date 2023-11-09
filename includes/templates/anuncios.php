@@ -1,6 +1,6 @@
 <?php
 //importar la conexión
-include 'includes/config/database.php';
+include 'includes/app.php';
 
 
 // Capture the search query if it exists

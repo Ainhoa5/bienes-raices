@@ -1,7 +1,7 @@
 
     
 <?php
-include 'includes/funciones.php';
+include 'includes/app.php';
 incluirTemplate('header', false, '');
 ?>
 

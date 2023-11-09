@@ -1,6 +1,6 @@
 <?php
 // Import your function to connect to database
-include '../../includes/config/database.php';
+include '../../includes/app.php';
 
 // Check if id_to_update and other fields are set
 if(isset($_POST['id_to_update'])) {

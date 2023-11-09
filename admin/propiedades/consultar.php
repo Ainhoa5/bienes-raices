@@ -1,6 +1,5 @@
 <?php
-include '../../includes/funciones.php';
-include '../../includes/config/database.php';
+include '../../includes/app.php';
 incluirTemplate('header', false, '../../');
 
 // Connect to the database

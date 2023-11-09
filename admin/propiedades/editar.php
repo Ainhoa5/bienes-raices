@@ -1,8 +1,7 @@
 <?php
-include '../../includes/funciones.php';
+include '../../includes/app.php';
 incluirTemplate('header', false, '../../');
 // Import your function to connect to database
-include '../../includes/config/database.php';
 // Check if id_to_edit is set from GET request
 if (isset($_GET['id_to_edit'])) {
     $id_to_edit = $_GET['id_to_edit'];
