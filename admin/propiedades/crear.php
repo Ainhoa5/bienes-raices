@@ -1,5 +1,11 @@
 <?php
 include '../../includes/app.php';
+use App\Propiedad;
+
+/* estaAutenticado(); */
+
+
+
 incluirTemplate('header', false, '../../');
 $db = conectarDB();
 
@@ -7,10 +13,6 @@ $db = conectarDB();
 $consulta = "SELECT * FROM vendedores;";
 $vendedoresQuery = mysqli_query($db, $consulta);
 
-/* echo "<pre>";
-var_dump($vendedoresQuery);
-echo "</pre>";
-exit; */
 //inicializo los errores
 $errores = [];
 
@@ -26,6 +28,8 @@ $creado = date("Y-m-d"); // Obtiene la fecha actual en formato "YYYY-MM-DD"
 
 
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
+  $propiedad = new Propiedad($_POST);
+  /* debugear($propiedad); */
   $titulo = $_POST['titulo'];
   $precio = $_POST['precio'];
   $descripcion = $_POST['descripcion'];
@@ -75,12 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $rutaCompletaImagen = $carpetaImagenes . '/' . $nombreImagen; // Ruta completa con barra diagonal
     move_uploaded_file($imagen['tmp_name'], $rutaCompletaImagen); // Subir archivo
     //Contenido de los insert
-    $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedores_id)
-   VALUES ('$titulo', '$precio', '$nombreImagen', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado', '$vendedores_id');
-   ";
-    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-    $resultado = mysqli_query($db, $query);
+    $propiedad->crear($db);
 
     if ($resultado) {
       //echo "Insertado correctamente";
@@ -118,11 +117,19 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
       <fieldset>
         <legend> Información General</legend>
         <!-- Titulo -->
+        <input type="hidden" name="id">
         <label for="titulo">Título: </label>
         <input type="text" id="titulo" name="titulo" placeholder="Título propiedad" value="<?php echo $titulo; ?>">
         <!-- Precio -->
         <label for="precio">Precio</label>
         <input type="number" id="precio" name="precio" placeholder="Type a price" value="<?php echo $precio; ?>">
+        <!-- Imagen -->
+        <label for="imagen">Imagen: </label>
+        <input type="file" id="imagen" name="imagen" accept="image/jpeg, image/png">
+        <!-- Descipcion -->
+        <label for="descripcion">Descipción</label>
+        <textarea name="descripcion" id="Descipcion" placeholder="Descripcion" cols="30"
+          rows="10"><?php echo $descripcion; ?></textarea>
         <!-- habitaciones -->
         <label for="habitaciones">habitaciones</label>
         <input type="number" id="habitaciones" name="habitaciones" placeholder="Número de Habitaciones"
@@ -134,13 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <label for="estacionamiento">Estacionamiento</label>
         <input type="number" id="estacionamiento" name="estacionamiento" placeholder="Número de estacionamientos"
           value="<?php echo $estacionamiento; ?>">
-        <!-- Imagen -->
-        <label for="imagen">Imagen: </label>
-        <input type="file" id="imagen" name="imagen" accept="image/jpeg, image/png">
-        <!-- Descipcion -->
-        <label for="descripcion">Descipción</label>
-        <textarea name="descripcion" id="Descipcion" placeholder="Descripcion" cols="30"
-          rows="10"><?php echo $descripcion; ?></textarea>
         <!-- Vendedores -->
         <fieldset>
           <legend>Vendedor</legend>
