@@ -6,7 +6,9 @@
             "email": "73906190+Ainhoa5@users.noreply.github.com"
         }
     ],
-    "require": {},
+    "require": {
+        "intervention/image": "^2.7"
+    },
     "autoload": {
         "psr-4":{
             "App\\":"./clases"

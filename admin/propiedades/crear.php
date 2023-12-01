@@ -1,6 +1,7 @@
 <?php
 include '../../includes/app.php';
 use App\Propiedad;
+use Intervention\Image\ImageManagerStatic as Image;
 
 /* estaAutenticado(); */
 
@@ -14,78 +15,21 @@ $consulta = "SELECT * FROM vendedores;";
 $vendedoresQuery = mysqli_query($db, $consulta);
 
 //inicializo los errores
-$errores = [];
-
-// inicializo las variables a vacío
-$titulo = '';
-$precio = '';
-$descripcion = '';
-$habitaciones = '';
-$wc = '';
-$estacionamiento = '';
-$vendedores_id = '';
-$creado = date("Y-m-d"); // Obtiene la fecha actual en formato "YYYY-MM-DD"
+$errores = Propiedad::getErrores();
+$titulo = $_POST['titulo'];
+$precio = $_POST['precio'];
+$descripcion = $_POST['descripcion'];
+$habitaciones = $_POST['habitaciones'];
+$wc = $_POST['wc'];
+$estacionamiento = $_POST['estacionamiento'];
+$vendedores_id = $_POST['vendedores_id'];
 
 
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
   $propiedad = new Propiedad($_POST);
-  /* debugear($propiedad); */
-  $titulo = $_POST['titulo'];
-  $precio = $_POST['precio'];
-  $descripcion = $_POST['descripcion'];
-  $habitaciones = $_POST['habitaciones'];
-  $wc = $_POST['wc'];
-  $estacionamiento = $_POST['estacionamiento'];
-  $vendedores_id = $_POST['vendedores_id'];
-  $imagen = $_FILES['imagen'];
-
-
-  //comprobación de los datos
-  if (!$titulo) {
-    $errores[] = "Debes añadir un título";
-  }
-  if (!$precio) {
-    $errores[] = "Debes añadir un precio";
-  }
-  if (strlen($descripcion) < 50) {
-    $errores[] = "Debes añadir una descripcion y debe tener al menos 50 caracteres";
-  }
-  if (!$habitaciones) {
-    $errores[] = "Debes añadir el número de habitaciones";
-  }
-  if (!$wc) {
-    $errores[] = "Debes añadir el número de wc";
-  }
-  if (!$estacionamiento) {
-    $errores[] = "Debes añadir el número de estacionamientos";
-  }
-  if (!$imagen['name']) {
-    $errores[] = "La imagen es obligatoria";
-  }
-  //validar la imagen por tamaño
-  //medida máxima en kb
-  $medida = 100;
-  if (($imagen['size'] / 1024) > $medida) {
-    $errores[] = "Reduzca el tamaño de la imagen, debe ser menor a" . $medida . "Kb.";
-  }
-  //creamos la carpeta imágenes en la raíz del proyecto si es que no existe
-  $carpetaImagenes = '../../imagenes';
-  if (!is_dir($carpetaImagenes)) {
-    mkdir($carpetaImagenes);
-  }
-
+  $errores = $propiedad->validar();
   if (empty($errores)) {
-    $nombreImagen = md5(uniqid(rand(), true)) . ".jpg"; //Generar nombre único
-    $rutaCompletaImagen = $carpetaImagenes . '/' . $nombreImagen; // Ruta completa con barra diagonal
-    move_uploaded_file($imagen['tmp_name'], $rutaCompletaImagen); // Subir archivo
-    //Contenido de los insert
-    $propiedad->crear($db);
-
-    if ($resultado) {
-      //echo "Insertado correctamente";
-    } else {
-      echo "No se ha insertado correctamente: " . mysqli_error($db);
-    }
+    $propiedad->crear();
   }
 }
 
@@ -107,7 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     <?php foreach ($errores as $error) { ?>
       <div class="alerta error">
         <?php echo $error; ?>
-        >
       </div>
 
     <?php } ?>
