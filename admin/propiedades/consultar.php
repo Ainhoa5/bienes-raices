@@ -1,5 +1,8 @@
 <?php
 include '../../includes/app.php';
+use App\Propiedad;
+$propiedades = Propiedad::all();
+
 incluirTemplate('header', false, '../../');
 
 // Connect to the database
@@ -40,37 +43,37 @@ $result = mysqli_query($db, $sql);
             </tr>
         </thead>
         <tbody>
-            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+        <?php foreach ($propiedades as $propiedad):?>
                 <tr>
                     <td>
-                        <?php echo $row['id']; ?>
+                        <?php echo $propiedad->id; ?>
                     </td>
                     <td>
-                        <?php echo $row['titulo']; ?>
+                        <?php echo $propiedad->titulo; ?>
                     </td>
                     <td>
-                        <?php echo $row['precio']; ?>
+                        <?php echo $propiedad->precio; ?>
                     </td>
                     <!-- Image display starts here -->
                     <td>
-                        <img src="<?php echo $carpetaImagenes . '/' . $row['imagen']; ?>" alt="Property Image" width="50"
+                        <img src="<?php echo $carpetaImagenes . '/' . $propiedad->imagen; ?>" alt="Property Image" width="50"
                             onerror="this.onerror=null; this.width='100'; this.src='<?php echo $carpetaImagenes . '/' ?>default_image.png'">
                     </td>
                     <!-- Image display ends here -->
                     <td>
                         <form action="editar.php" method="GET">
-                            <input type="hidden" name="id_to_edit" value="<?php echo $row['id']; ?>">
+                            <input type="hidden" name="id_to_edit" value="<?php echo $propiedad->id; ?>">
                             <input type="submit" value="Edit">
                         </form>
                     </td>
                     <td>
                         <form action="eliminar.php" method="POST">
-                            <input type="hidden" name="id_to_delete" value="<?php echo $row['id']; ?>">
+                            <input type="hidden" name="id_to_delete" value="<?php echo $propiedad->id ?>">
                             <input type="submit" value="Delete">
                         </form>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </body>

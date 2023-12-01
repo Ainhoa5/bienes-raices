@@ -6,8 +6,8 @@ class Propiedad
 {
     protected static $db;
     protected static $columnasDB = ['id', 'titulo', 'precio', 'imagen', 'descripcion', 'habitaciones', 'wc', 'estacionamiento', 'creado', 'vendedores_id'];
-    protected static $errores=[]; //Validaciones public static 
-    
+    protected static $errores = []; //Validaciones public static 
+
     public $id;
     public $titulo;
     public $precio;
@@ -19,7 +19,10 @@ class Propiedad
     public $creado;
 
     public $vendedores_id;
-    public static function getErrores(){ return self::$errores; }
+    public static function getErrores()
+    {
+        return self::$errores;
+    }
     public function __construct($args = [])
     {
         $this->id = $args['id'] ?? null;
@@ -54,19 +57,22 @@ class Propiedad
         $query .= join(',', $values);
         $query .= ")";
         /* debugear($query); */
-        self::$db->query($query);
+
+        $resultado = self::$db->query($query);
+        return $resultado;
 
 
     }
-    public function setImagen($imagen){
-        if ($imagen){
-            $this->imagen=$imagen;
-            
+    public function setImagen($imagen)
+    {
+        if ($imagen) {
+            $this->imagen = $imagen;
         }
 
     }
-    public function validar(){
-        
+    public function validar()
+    {
+
         if (!$this->titulo) {
             self::$errores[] = 'Debes añadir un Titulo';
         }
@@ -92,7 +98,7 @@ class Propiedad
         if (!$this->imagen) {
             self::$errores[] = 'Imagen no válida';
         }
-       return self::$errores;
+        return self::$errores;
     }
     public function atributos()
     {
@@ -112,6 +118,51 @@ class Propiedad
             $sanitizado[$key] = self::$db->escape_string($value);
         }
         return $sanitizado;
+    }
+
+    public static function all()
+    {
+        $query = "SELECT * FROM propiedades";
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
+
+    public static function consultarSQL($query)
+    {
+        //Consultar la base de datos
+        $resultado = self::$db->query($query);
+
+        // Check if the query was successful
+        if (!$resultado) {
+            // Handle error - maybe log it and/or return an empty array
+            return [];
+        }
+
+        //iterar los resultados
+        $array = [];
+        while ($registro = $resultado->fetch_assoc()) {
+            $array[] = self::crearObjeto($registro);
+        }
+
+        //liberar la memoria
+        $resultado->free();
+
+        //devolver resultados
+        return $array;
+    }
+
+    protected static function crearObjeto($registro)
+    {
+        $objeto = new self;
+
+        foreach ($registro as $key => $value) {
+
+            if (property_exists($objeto, $key)) {
+                $objeto->$key = $value;
+
+            }
+        }
+        return $objeto;
     }
 
 }

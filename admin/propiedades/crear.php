@@ -16,20 +16,47 @@ $vendedoresQuery = mysqli_query($db, $consulta);
 
 //inicializo los errores
 $errores = Propiedad::getErrores();
-$titulo = $_POST['titulo'];
-$precio = $_POST['precio'];
-$descripcion = $_POST['descripcion'];
-$habitaciones = $_POST['habitaciones'];
-$wc = $_POST['wc'];
-$estacionamiento = $_POST['estacionamiento'];
-$vendedores_id = $_POST['vendedores_id'];
+$titulo = '';
+$precio = '';
+$descripcion = '';
+$habitaciones = '';
+$wc = '';
+$estacionamiento = '';
+$vendedores_id = '';
 
 
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
   $propiedad = new Propiedad($_POST);
+
+  /* Set values */
+  $titulo = $propiedad->titulo;
+  $precio = $propiedad->precio;
+  $descripcion = $propiedad->descripcion;
+  $habitaciones = $propiedad->habitaciones;
+  $wc = $propiedad->wc;
+  $estacionamiento = $propiedad->estacionamiento;
+  $carpetaImagenes = '../../imagenes/';
+  if (!is_dir($carpetaImagenes)) {
+    mkdir($carpetaImagenes);
+  }
+  $nombreImagen = md5(uniqid(rand(), true)) . ".jpg";
+
+  if ($_FILES['imagen']['tmp_name']) {
+    //Realiza resize
+    $image = Image::make($_FILES['imagen']['tmp_name']);
+    $image->fit(800, 600);
+    $propiedad->setImagen($nombreImagen);
+  }
   $errores = $propiedad->validar();
   if (empty($errores)) {
-    $propiedad->crear();
+    //Subir la imagen
+    $image->save($carpetaImagenes . $nombreImagen);
+    //guardar en la bd
+    $resultado = $propiedad->crear();
+
+    if ($resultado) {
+      header('location: /admin/index.php?mensaje=1');
+    }
   }
 }
 
@@ -62,17 +89,18 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <!-- Titulo -->
         <input type="hidden" name="id">
         <label for="titulo">Título: </label>
-        <input type="text" id="titulo" name="titulo" placeholder="Título propiedad" value="<?php echo $titulo; ?>">
+        <input type="text" id="titulo" name="titulo" placeholder="Título propiedad"
+          value="<?php echo htmlspecialchars($titulo); ?>">
         <!-- Precio -->
         <label for="precio">Precio</label>
-        <input type="number" id="precio" name="precio" placeholder="Type a price" value="<?php echo $precio; ?>">
+        <input type="number" id="precio" name="precio" placeholder="Type a price" value="<?php echo htmlspecialchars($precio); ?>">
         <!-- Imagen -->
         <label for="imagen">Imagen: </label>
         <input type="file" id="imagen" name="imagen" accept="image/jpeg, image/png">
         <!-- Descipcion -->
         <label for="descripcion">Descipción</label>
         <textarea name="descripcion" id="Descipcion" placeholder="Descripcion" cols="30"
-          rows="10"><?php echo $descripcion; ?></textarea>
+          rows="10"><?php echo htmlspecialchars($descripcion); ?></textarea>
         <!-- habitaciones -->
         <label for="habitaciones">habitaciones</label>
         <input type="number" id="habitaciones" name="habitaciones" placeholder="Número de Habitaciones"
@@ -83,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <!-- estacionamiento -->
         <label for="estacionamiento">Estacionamiento</label>
         <input type="number" id="estacionamiento" name="estacionamiento" placeholder="Número de estacionamientos"
-          value="<?php echo $estacionamiento; ?>">
+          value="<?php echo htmlspecialchars($estacionamiento); ?>">
         <!-- Vendedores -->
         <fieldset>
           <legend>Vendedor</legend>
