@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     //Subir la imagen
     $image->save($carpetaImagenes . $nombreImagen);
     //guardar en la bd
-    $resultado = $propiedad->crear();
+    $resultado = $propiedad->guardar();
 
     if ($resultado) {
       header('location: /admin/index.php?mensaje=1');
